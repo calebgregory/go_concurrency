@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func main() {
+func main() { // receives channel c from func `boring`
 	c := boring("boring!")
 
 	for i := 0; i < 5; i++ {
@@ -15,7 +15,7 @@ func main() {
 	fmt.Println("omg tihs is s0e broing gime outahere")
 }
 
-func boring(s string) <-chan string {
+func boring(s string) <-chan string { // returns receive-only channel
 	c := make(chan string)
 
 	go func() {
