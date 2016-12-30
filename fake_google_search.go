@@ -22,6 +22,17 @@ func fakeSearch(kind string) Search {
 	}
 }
 
+// Q how do we avoid discarding results from slow servers?
+// A replicate the servers. send requests to multiple replicas and use the first response
+func First(query string, replicas ...Search) Result {
+	c := make(chan Result)
+	searchReplica := func(i int) { c <- replicas[i](query) }
+	for i := range replicas {
+		go searchReplica(i)
+	}
+	return <-c
+}
+
 func Google(query string) (results []Result) {
 	c := make(chan Result)
 
@@ -45,7 +56,7 @@ func Google(query string) (results []Result) {
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	start := time.Now()
-	results := Google("golang")
+	results := First("golang", fakeSearch("replica 1"), fakeSearch("replica 2"))
 	elapsed := time.Since(start)
 	fmt.Println(results)
 	fmt.Println(elapsed)
