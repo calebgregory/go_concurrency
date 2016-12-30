@@ -8,13 +8,14 @@ import (
 
 func main() { // receives channel c from func `boring`
 	c := boring("A")
+	timeout := time.After(5 * time.Second)
 
 	for {
 		select {
 		case s := <-c:
 			fmt.Println(s)
-		case <-time.After(1 * time.Second):
-			fmt.Println("You are toooooo slow")
+		case <-timeout:
+			fmt.Println("That's it. It's been 5 s i'm done")
 			return
 		}
 
